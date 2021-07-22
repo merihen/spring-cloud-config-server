@@ -1,15 +1,57 @@
-spring:
-  cloud:
-    stream:
-      defaultBinder: rabbit
-  config:
-    activate:
-      on-profile: cloud-bus-rabbit
----
-spring:
-  cloud:
-    stream:
-      defaultBinder: kafka
-  config:
-    activate:
-      on-profile: cloud-bus-kafka
+
+# Eureka configuration
+               eureka:
+                  instance:
+                     leaseRenewalIntervalInSeconds: 5
+                     lease-expiration-duration-in-seconds: 5
+                     preferIpAddress: false
+                  client:
+                     fetch-registry: true
+                     registry-fetch-interval-seconds: 5
+
+# Sleuth configuration
+               spring.sleuth:
+                  sampler.percentage: 1.0
+                  web.skip-pattern: (^cleanup.*)
+# Feign configuration
+               feign:
+                  client:
+                     config:
+                        default:
+                           connectTimeout: ${rest.timeout}
+                           readTimeout: ${rest.timeout}
+# Ribbon configuration
+               ribbon:
+                  ReadTimeout: ${rest.timeout}
+                  ConnectTimeout: ${rest.timeout}
+                  OkToRetryOnAllOperations: true
+                  MaxAutoRetries: 1
+                  MaxAutoRetriesNextServer: 1
+
+eureka:
+   server:
+      host: 192.168.50.10
+      port: 8761
+   instance:
+      hostname: master
+      leaseRenewalIntervalInSeconds: 5
+      lease-expiration-duration-in-seconds: 5
+      preferIpAddress: false
+   client:
+      fetch-registry: true
+      registry-fetch-interval-seconds: 5
+      service-url:
+         defaultZone: http://192.168.50.10:8761/eureka
+
+logging.level:
+   root: info
+   com.almerys: info
+   org.springframework:
+      security: info
+      cloud.sleuth: info
+   com.netflix.discovery:
+      DiscoveryClient: OFF
+      shared.transport.decorator: OFF
+      shared.resolver.aws.ConfigClusterResolver: OFF
+      
+rest.timeout: 30000
